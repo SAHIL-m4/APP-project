@@ -1,0 +1,9 @@
+CREATE DATABASE airline_db;
+USE airline_db;
+
+CREATE TABLE reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_name VARCHAR(100),
+    flight_number VARCHAR(20),
+    seat_number VARCHAR(10)
+);
