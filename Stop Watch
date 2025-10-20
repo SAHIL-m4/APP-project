@@ -1,0 +1,60 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+public class Stopwatch extends JFrame implements ActionListener {
+    private int milliseconds = 0, seconds = 0, minutes = 0;
+    private boolean running = false;
+    private JLabel timeLabel;
+    private JButton startButton, stopButton, resetButton;
+    private Timer timer;
+    public Stopwatch() {
+        setTitle("Stopwatch");
+        setSize(300, 150);
+        setLayout(new FlowLayout());
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        timeLabel = new JLabel("00:00:00");
+        timeLabel.setFont(new Font("Verdana", Font.PLAIN, 30));
+        add(timeLabel);
+        startButton = new JButton("Start");
+        stopButton = new JButton("Stop");
+        resetButton = new JButton("Reset");
+        add(startButton);
+        add(stopButton);
+        add(resetButton);
+        startButton.addActionListener(this);
+        stopButton.addActionListener(this);
+        resetButton.addActionListener(this);
+        timer = new Timer(10, e -> {
+            milliseconds += 10;
+            if (milliseconds == 1000) {
+                seconds++;
+                milliseconds = 0;
+            }
+            if (seconds == 60) {
+                minutes++;
+                seconds = 0;
+            }
+            timeLabel.setText(String.format("%02d:%02d:%02d", minutes, seconds, milliseconds/10));
+        });
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == startButton && !running) {
+            timer.start();
+            running = true;
+        } else if (e.getSource() == stopButton && running) {
+            timer.stop();
+            running = false;
+        } else if (e.getSource() == resetButton) {
+            timer.stop();
+            running = false;
+            milliseconds = seconds = minutes = 0;
+            timeLabel.setText("00:00:00");
+        }
+    }
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new Stopwatch().setVisible(true);
+        });
+    }
+}
