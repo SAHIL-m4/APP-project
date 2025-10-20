@@ -7,3 +7,71 @@ CREATE TABLE reservations (
     flight_number VARCHAR(20),
     seat_number VARCHAR(10)
 );
+
+INSERT INTO reservations (passenger_name, flight_number, seat_number) VALUES
+('SAhil', 'AI101', '12A'),
+('reh', 'AI102', '7B');
+
+import java.sql.*;
+import java.util.Scanner;
+public class AirlineReservationSystem {
+    static Connection conn;
+    public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/airline_db",  
+                "root",                                
+                "password" 
+            );
+            Scanner scanner = new Scanner(System.in);
+            int choice;
+            do {
+                System.out.println("\n--- Airline Reservation System ---");
+                System.out.println("1. View All Reservations");
+                System.out.println("2. Exit");
+                System.out.print("Enter your choice: ");
+                choice = scanner.nextInt();
+                scanner.nextLine();  
+                switch (choice) {
+                    case 1:
+                        viewReservations();
+                        break;
+                    case 2:
+                        System.out.println("Exiting...");
+                        break;
+                    default:
+                        System.out.println("Invalid choice, try again.");
+                }
+            } while (choice != 2);
+
+            scanner.close();
+            conn.close();
+        } catch (ClassNotFoundException e) {
+            System.out.println("JDBC Driver not found: " + e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
+        }
+    }
+    static void viewReservations() {
+        try {
+            String sql = "SELECT * FROM reservations";
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+            System.out.println("\n=========== AIRLINE RESERVATIONS ===========");
+            while (rs.next()) {
+                System.out.println("╔══════════════════════════════════════╗");
+                System.out.println("║           BOARDING PASS              ║");
+                System.out.println("╠══════════════════════════════════════╣");
+                System.out.println("║ Ticket ID   : " + rs.getInt("id"));
+                System.out.println("║ Passenger   : " + rs.getString("passenger_name"));
+                System.out.println("║ Flight No.  : " + rs.getString("flight_number"));
+                System.out.println("║ Seat No.    : " + rs.getString("seat_number"));
+                System.out.println("╚══════════════════════════════════════╝\n");
+            }
+            System.out.println("============= END OF LIST =============");
+        } catch (SQLException e) {
+            System.out.println("Error fetching data: " + e.getMessage());
+        }
+    }
+}
